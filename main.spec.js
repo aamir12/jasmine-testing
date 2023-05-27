@@ -180,9 +180,33 @@ describe("main.js", function () {
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledTimes(1);
       //we need to call the spy to get the return value
       expect(spy()).toEqual("simple calculator");
+    });
+  });
+
+  describe("showVersoin()", function () {
+    it("should call the showVersoin method", function () {
+      const element = spyOn(document, "getElementById").and.returnValue({
+        innerText: null,
+      });
+
+      //here we are getting spy of getter function
+      //const spy = spyOnProperty(Calculator.prototype, "version", "get");
+
+      const spy = spyOnProperty(
+        Calculator.prototype,
+        "version",
+        "get"
+      ).and.returnValue(Promise.resolve(new Response('{"version":"0.9"}')));
+
+      showVersion();
+
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledTimes(1);
+      spy().then(function (version) {
+        expect(element().innerText).toBe(version);
+      });
     });
   });
 });

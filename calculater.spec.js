@@ -191,11 +191,32 @@ describe("Caculater.js", function () {
       //done specify when our test case is completed
       //by default test case only test sync code. To inform jasmine our
       //code is still need to be run then we use done method
+      //here we are calling actual API. which cost the test case performance
+      // it("fetches version from external source", function (done) {
+      //   calculater.version.then(function (version) {
+      //     expect(version).toBe("0.4");
+      //     done();
+      //   });
+      // });
+
+      //here we are mocking API response.
+      //we are not calling any api here
       it("fetches version from external source", function (done) {
+        spyOn(window, "fetch").and.returnValue(
+          Promise.resolve(new Response('{"version":"0.9"}'))
+        );
         calculater.version.then(function (version) {
-          expect(version).toBe("0.4");
+          expect(version).toBe("0.9");
           done();
         });
+      });
+
+      it("fetches version from external source by using async await", async function () {
+        spyOn(window, "fetch").and.returnValue(
+          Promise.resolve(new Response('{"version":"0.9"}'))
+        );
+        const version = await calculater.version;
+        expect(version).toBe("0.9");
       });
     });
   });
